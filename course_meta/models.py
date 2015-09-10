@@ -23,16 +23,23 @@ except Exception:
 send_user_notification = Signal(providing_args=['name','email','state'])
 
 class CourseGroup(models.Model):
-    #课程人员分组
-    name = models.CharField(blank=True, max_length=255,default='')
+    """
+    名称:人员分班
+    数据项:course_id，名称，人员，分组
+    """
+    course_id = models.ForeignKey(Course, db_index=True)
     users = models.ManyToManyField(User, db_index=True, related_name="course_groups")
-    course_id = models.CharField(blank=True, max_length=255,default='')
+    name = models.CharField(blank=True, max_length=255,default='')
     COHORT = 'cohort'
     GROUP_TYPE_CHOICES = ((COHORT, 'Cohort'),)
     group_type = models.CharField(max_length=20, choices=GROUP_TYPE_CHOICES)
     bar_code = models.CharField(blank=True, max_length=255,default='')
 
 class CourseGroupUser(models.Model):
+    """
+    名称:用户和CourseGroup的关联表
+    数据项:
+    """
    #用户和CourseGroup的关联表
     courseusergroup_id = models.ManyToManyField(CourseGroup, db_index=True)
     user_id = models.ManyToManyField(User, db_index=True)
@@ -56,7 +63,10 @@ class CategoryGroup(models.Model):
         return u'%s - %s' % (self.name,self.owner)
 
 class CourseCategory(models.Model):
-    #课程分类
+    """
+    名称:课程分类，用于课程理工文史的分类
+    数据项:
+    """
     parent_id = models.IntegerField(blank=True, null=True)
     slug = models.CharField(max_length=64, blank=True, null=True)
     name = models.CharField(max_length=64)
@@ -67,7 +77,10 @@ class CourseCategory(models.Model):
         return u'%s - %s' % (self.name,self.group)
 
 class Organization(models.Model):
-    #教师组织来源,如某大学
+    """
+    名称:教师组织来源,如某大学
+    数据项:org的缩写（英文，便于区分，如tsinghua），名称，基本介绍
+    """
     org = models.CharField(max_length=128, db_index=True)
     name = models.CharField(max_length=255)
     about = models.TextField()
@@ -76,7 +89,10 @@ class Organization(models.Model):
         return u'%s %s' % (self.org, self.name)
 
 class Staff(models.Model):
-    #教师,Professors, teachers, TAs, and all these staff are called Staff
+    """
+    名称:教师数据表,Professors, teachers, TAs, and all these staff are called Staff
+    数据项:教师姓名，院校，部职别信息，头像，简介，邮箱
+    """
     name = models.CharField(max_length=255, db_index=True)
     org_id = models.ForeignKey(Organization, db_index=True)
     company = models.CharField(max_length=255, blank=True)
@@ -98,7 +114,10 @@ class Staff(models.Model):
         return ' '.join((self.company, self.department, self.position, self.name))
 
 class CourseStaffRelationship(models.Model):
-    #教师身份属性
+    """
+    名称:教师身份属性与课程表，用于课程管理
+    数据项:教师id，课程id，教师身份role
+    """
     staff = models.ForeignKey(Staff)
     course = models.ForeignKey(Course)
     roles = ((0, "teacher"),
@@ -112,9 +131,11 @@ class CourseStaffRelationship(models.Model):
         return u'%s %s' % (self.course, self.staff)
 
 class Course(models.Model):
-    #课程详情
+    """
+    名称:课程详情
+    数据项:
+    """
     name = models.CharField(max_length=255)
-
     subtitle = models.CharField(max_length=512)
     create_time = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

@@ -26,7 +26,7 @@ from importlib import import_module
 from social_oauth.utils import get_gravatar_url
 import logging
 from django.utils.translation import ugettext as _
-
+from course_meta.models import Course
 
 log = logging.getLogger(__name__)
 AUDIT_LOG = logging.getLogger("audit")
@@ -34,6 +34,10 @@ AUDIT_LOG = logging.getLogger("audit")
 SessionStore = import_module(settings.SESSION_ENGINE).SessionStore  # pylint: disable=invalid-name
 
 class UserProfile(models.Model):
+    '''
+    名称:userprofile，用于存储django.contrib.auth的默认User的辅助信息
+    数据项:
+    '''
     #userprofile存储User的辅助信息
     class Meta:  # pylint: disable=missing-docstring
         db_table = "auth_userprofile"
@@ -207,20 +211,13 @@ class UserProfile(models.Model):
 
 class CourseEnrollment(models.Model):
     """
-    Represents a Student's Enrollment record for a single Course. You should
-    generally not manipulate CourseEnrollment objects directly, but use the
-    classmethods provided to enroll, unenroll, or check on the enrollment status
-    of a given student.
-
-    We're starting to consolidate course enrollment logic in this class, but
-    more should be brought in (such as checking against CourseEnrollmentAllowed,
-    checking course dates, user permissions, etc.) This logic is currently
-    scattered across our views.
+    名称:userprofile，用于存储django.contrib.auth的默认User的辅助信息
+    数据项:
     """
     MODEL_TAGS = ['course_id', 'is_active', 'mode']
 
     user = models.ForeignKey(User)
-    course_id = models.CharField(max_length=255, db_index=True)
+    course_id = models.ForeignKey(Course, db_index=True)
     created = models.DateTimeField(auto_now_add=True, null=True, db_index=True)
 
     # If is_active is False, then the student is not considered to be enrolled

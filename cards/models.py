@@ -10,6 +10,7 @@ from django.db import models
 from django.dispatch import Signal
 from django.conf import settings
 from jsonfield.fields import JSONField
+from course_meta.models import Course
 
 log = logging.getLogger(__name__)
 try:
@@ -18,19 +19,13 @@ except Exception:
     cache = cache
 
 class Collection(models.Model):
-    #教师作品集,以一张张的卡片为内容
+    """
+    名称:教师作品集,以一张张的卡片为内容
+    数据项:课程id，标题,card,作品集创建者，上次编辑者，创建、更改时间，注册开始结束时间，开始结束时间，发布状态
+    """
+    course_id = models.ForeignKey(Course, db_index=True)
     title = models.CharField(max_length=255, blank=True, null=True)
-    card = models.ForeignKey(Card, db_index=True)
-
-class Card(models.Model):
-    #ppt的一张张卡片,3种类型（video，image，problem）
-    type = models.CharField(max_length=5, default='image')
-    title = models.CharField(max_length=255, blank=True, default='')
-    content = JSONField(default={}, null=False, blank=True)
-    videoSrc = models.URLField(max_length=255, blank=True, null=True)
-    imageSrc = models.ImageField(max_length=255, blank=True, null=True)
-    problemSrc =models.CharField(max_length=255, blank=True, null=True)
-    audioSrc = models.CharField(max_length=255, blank=True, null=True)
+    card = models.ManyToManyField(Card, db_index=True)
 
     creator = models.CharField(max_length=255, blank=True)
     pre_editor = models.CharField(max_length=255, blank=True)
@@ -41,6 +36,26 @@ class Card(models.Model):
     start = models.DateTimeField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
     pub_status = models.SmallIntegerField(default=0)
+
+    def __unicode__(self):
+        return "[Collection] id: {} course_id: {} title: {} card: {}".format(self.id, self.course_id, self.title, self.card)
+
+class Card(models.Model):
+    """
+    名称:ppt的一张张卡片,3种内容类型［video，image（可能包含背景录音），problem（可能包含背景录音）］
+    数据项:内容类型，名称，json数据串，三种数据的src，背景录音audio的地址
+    """
+    type = models.CharField(max_length=5, default='image')
+    title = models.CharField(max_length=255, blank=True, default='')
+    content = JSONField(default={}, null=False, blank=True)
+    videoSrc = models.URLField(max_length=255, blank=True, null=True)
+    imageSrc = models.ImageField(max_length=255, blank=True, null=True)
+    problemSrc =models.CharField(max_length=255, blank=True, null=True)
+    audioSrc = models.CharField(max_length=255, blank=True, null=True)
+
+    def __unicode__(self):
+        return "[Card] id: {} type: {} title: {} content: {}".format(self.id, self.course_id, self.title, self.content)
+
 
 class Video(Card):
     objects = VideoManager()

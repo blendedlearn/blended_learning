@@ -3,9 +3,20 @@
 import sys
 import os
 
+from path import path
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+#set project settings
+PROJECT_ROOT = path(__file__).abspath().dirname().dirname()
+REPO_ROOT = PROJECT_ROOT.dirname()
+COMMON_ROOT = REPO_ROOT / "common"
+ENV_ROOT = REPO_ROOT.dirname()  # virtualenv dir /edx-platform is in
+COURSES_ROOT = ENV_ROOT / "data"
+
+DATA_DIR = COURSES_ROOT
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -18,8 +29,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'blended_learning',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -35,11 +46,14 @@ ALLOWED_HOSTS = []
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'Asia/shanghai'
+TIME_ZONE = 'Asia/Chongqing'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-cn'
+
+# log time format
+LOG_TIME_FORMAT = "%Y/%m/%d %H:%M:%S"
 
 SITE_ID = 1
 
@@ -72,6 +86,14 @@ STATIC_ROOT = ''
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
+
+# Static content
+STATIC_ROOT = ENV_ROOT / "staticfiles"
+
+STATICFILES_DIRS = [
+    COMMON_ROOT / "static",
+    PROJECT_ROOT / "static",
+]
 
 # Additional locations of static files
 STATICFILES_DIRS = (
