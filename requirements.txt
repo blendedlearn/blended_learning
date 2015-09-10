@@ -21,7 +21,7 @@ pytz==2012h
 supervisor
 django-social-auth
 django_openid_auth
-django==1.4.18
+django==1.8.4
 
 # Used for development operation
 watchdog==0.7.1
