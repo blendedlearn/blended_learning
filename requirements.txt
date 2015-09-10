@@ -1,0 +1,37 @@
+#requirements of the platform
+tig
+wechat-sdk
+jsonfield
+supervisor
+gunicorn==0.17.4
+oauthlib==0.6.3
+lxml==3.3.6
+lazy==1.1
+requests==2.4.1
+requests-oauthlib==0.4.1
+South==0.7.6
+xlrd==0.9.3
+html5lib==0.999
+mako==0.9.1
+Markdown==2.2.1
+networkx==1.7
+nltk==2.0.4
+pip>=1.4
+pytz==2012h
+supervisor
+django-social-auth
+django_openid_auth
+django==1.4.18
+
+# Used for development operation
+watchdog==0.7.1
+
+#sudo apt-get install ipython
+#sudo apt-get install python-setuptools
+#sudo apt-get install libmysqlclient-dev
+#sudo apt-get install mysql-client
+#sudo apt-get install mysql-server
+#easy_install --upgrade pytz
+#sudo apt-get install uwsgi
+#sudo apt-get install libxml2
+#sudo apt-get install libxml2-dev
