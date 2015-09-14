@@ -1,5 +1,7 @@
 # .gitignore for blended_learning.
 # There's a lot here, please try to keep it organized.
+/blended_learning/settings.py
+settings.py
 
 ### Files private to developers
 
@@ -86,4 +88,3 @@ dist
 *.map
 
 
-blended_learning/settings.py
