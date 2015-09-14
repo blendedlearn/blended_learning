@@ -1,5 +1,4 @@
 #requirements of the platform
-tig
 wechat-sdk
 jsonfield
 supervisor
