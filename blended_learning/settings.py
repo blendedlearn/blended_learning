@@ -2,21 +2,11 @@
 # Django settings for blended_learning project.
 import sys
 import os
-
-from path import path
+# from django.contrib.auth.models import User
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-#set project settings
-PROJECT_ROOT = path(__file__).abspath().dirname().dirname()
-REPO_ROOT = PROJECT_ROOT.dirname()
-COMMON_ROOT = REPO_ROOT / "common"
-ENV_ROOT = REPO_ROOT.dirname()  # virtualenv dir /edx-platform is in
-COURSES_ROOT = ENV_ROOT / "data"
-
-DATA_DIR = COURSES_ROOT
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -30,7 +20,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'blended_learning',                      # Or path to database file if using sqlite3.
+        'NAME': 'blended_learning',      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -50,10 +40,7 @@ TIME_ZONE = 'Asia/Chongqing'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'zh-cn'
-
-# log time format
-LOG_TIME_FORMAT = "%Y/%m/%d %H:%M:%S"
+LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
 
@@ -86,14 +73,6 @@ STATIC_ROOT = ''
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
-
-# Static content
-STATIC_ROOT = ENV_ROOT / "staticfiles"
-
-STATICFILES_DIRS = [
-    COMMON_ROOT / "static",
-    PROJECT_ROOT / "static",
-]
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -128,6 +107,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'provider.oauth2.middleware.OauthMiddleware',
+    # 'provider.oauth2.middleware_csrf.XueTangCsrfViewMiddleware',
 )
 
 ROOT_URLCONF = 'blended_learning.urls'
@@ -140,7 +121,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
-
+AUTH_USER_MODEL = 'student.UserProfile'
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -152,7 +133,15 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'social_auth',
+    # 'social_oauth',
     'south',
+    'student',
+    'cards',
+    'course_meta',
+    # OAuth2 Provider
+    'provider',
+    'provider.oauth2',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -210,7 +199,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.weixin.WeixinBackend',
     'social_auth.backends.contrib.weixin.WeixinAPPBackend',
     'social_auth.backends.contrib.chinamobile.ChinaMobileBackend',
-    #'social_oauth.backends.OAuth2Backend',
+    'social_oauth.backends.OAuth2Backend',
     # must add，or django default user cant login
     'social_oauth.backends.NickNameBackend',
     'social_oauth.backends.PhoneNumberBackend',

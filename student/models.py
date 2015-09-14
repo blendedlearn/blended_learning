@@ -12,6 +12,7 @@ from django.db.models import Q
 import pytz
 from django.conf import settings
 from django.utils import timezone
+from django.conf import settings
 from django.contrib.auth.models import User
 
 from django.db import models
@@ -26,7 +27,7 @@ from importlib import import_module
 from social_oauth.utils import get_gravatar_url
 import logging
 from django.utils.translation import ugettext as _
-from course_meta.models import Course
+from course_meta.models import Course, Classroom
 
 log = logging.getLogger(__name__)
 AUDIT_LOG = logging.getLogger("audit")
@@ -36,7 +37,8 @@ SessionStore = import_module(settings.SESSION_ENGINE).SessionStore  # pylint: di
 class UserProfile(models.Model):
     '''
     名称:userprofile，用于存储django.contrib.auth的默认User的辅助信息
-    数据项:
+    数据项:用户id、名字=昵称、手机号、头像、唯一uuid标识、院校、部职别信息、role身份（用于接收是否是staff的信息)
+            出生日期、性别、邮箱、上次登录ip、上次登录时间,meta记录相关扩充的json数据
     '''
     #userprofile存储User的辅助信息
     class Meta:  # pylint: disable=missing-docstring
@@ -45,61 +47,29 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, db_index=True, related_name='profile')
     name = models.CharField(blank=True, max_length=255, db_index=True)
     nickname = models.CharField(blank=True, unique=True, max_length=255, db_index=True, default='')
-    phone_number = models.CharField(blank=True, null=True, unique=True, max_length=50, db_index=True, default='')
+    phone_number = models.CharField(blank=True, null=True, unique=True, max_length=50, db_index=True)
     avatar = models.URLField(blank=True, max_length=255, default='')
     unique_code = models.CharField(blank=True, max_length=20, null=True, unique=True, db_index=True)
-    school = models.CharField(blank=True, max_length=255)
 
-    meta = models.TextField(blank=True)  # JSON dictionary for future expansion
-    courseware = models.CharField(blank=True, max_length=255, default='course.xml')
+    weixin_id = models.CharField(blank=True, max_length=255)
+    school = models.CharField(blank=True, max_length=128, default='')
+    department = models.CharField(blank=True, max_length=128, default='')
+    position = models.CharField(blank=True, max_length=64, default='')
+    school_number = models.CharField(blank=True, max_length=64, default='')
+    role = models.CharField(blank=True, max_length=64, default='')
 
-    # Location is no longer used, but is held here for backwards compatibility
-    # for users imported from our first class.
-    language = models.CharField(blank=True, max_length=255, db_index=True)
-    location = models.CharField(blank=True, max_length=255, db_index=True)
-
-    # Optional demographic data we started capturing from Fall 2012
     this_year = datetime.now(UTC).year
     VALID_YEARS = range(this_year, this_year - 120, -1)
     year_of_birth = models.IntegerField(blank=True, null=True, db_index=True)
-    GENDER_CHOICES = (('m', _('Male')), ('f', _('Female')), ('o', _('Other')))
+    GENDER_CHOICES = (('m', _('Male')), ('f', _('Female')))
     gender = models.CharField(
         blank=True, null=True, max_length=6, db_index=True, choices=GENDER_CHOICES
     )
-
-    # [03/21/2013] removed these, but leaving comment since there'll still be
-    # p_se and p_oth in the existing data in db.
-    # ('p_se', 'Doctorate in science or engineering'),
-    # ('p_oth', 'Doctorate in another field'),
-    LEVEL_OF_EDUCATION_CHOICES = (
-        ('p', _('Doctorate')),
-        ('m', _("Master's or professional degree")),
-        ('b', _("Bachelor's degree")),
-        ('a', _("Associate's degree")),
-        ('hs', _("Secondary/high school")),
-        ('jhs', _("Junior secondary/junior high/middle school")),
-        ('el', _("Elementary/primary school")),
-        ('none', _("None")),
-        ('other', _("Other"))
-    )
-    level_of_education = models.CharField(
-        blank=True, null=True, max_length=6, db_index=True,
-        choices=LEVEL_OF_EDUCATION_CHOICES
-    )
-    mailing_address = models.TextField(blank=True, null=True)
-    goals = models.TextField(blank=True, null=True)
-    allow_certificate = models.BooleanField(default=1)
-
-    city = models.CharField(max_length=127, blank=True, null=True)
-    country = CountryField(blank=True, null=True)
-    district = models.CharField(max_length=127, blank=True, null=True)
-    zip_code = models.CharField(max_length=15, blank=True, null=True)
-    telephone_number = models.CharField(max_length=31, blank=True, null=True)
-
+    email = models.TextField(blank=True, null=True)
+    #数据统计的项目－上次登录的Ip,上次登录的时间
     last_login_ip = models.CharField(max_length=15, blank=True, null=True)
-    register_type = models.CharField(max_length=8, blank=True, null=True)  # email | phone | auto
-    register_auto = models.BooleanField(default=0)  # 0 | 1
     last_retrievepwd_time = models.DateTimeField(blank=True, null=True)
+    meta = models.TextField(blank=True)  # JSON dictionary for future expansion
 
     def get_meta(self):  # pylint: disable=missing-docstring
         js_str = self.meta
@@ -208,25 +178,16 @@ class UserProfile(models.Model):
         nickname = self.nickname if self.nickname else ''
         unique_code = self.unique_code if self.unique_code else ''
         return u'{}:{}'.format(unique_code, nickname)
-
-class CourseEnrollment(models.Model):
+'''
+class ClassroomEnrollment(models.Model):
     """
-    名称:userprofile，用于存储django.contrib.auth的默认User的辅助信息
-    数据项:
+    名称:用户选课表，记录用户所在班级，学了什么课程
+    数据项:用户,课程id，加入课程的时间，
     """
-    MODEL_TAGS = ['course_id', 'is_active', 'mode']
-
     user = models.ForeignKey(User)
-    course_id = models.ForeignKey(Course, db_index=True)
-    created = models.DateTimeField(auto_now_add=True, null=True, db_index=True)
-
-    # If is_active is False, then the student is not considered to be enrolled
-    # in the course (is_enrolled() will return False)
-    is_active = models.BooleanField(default=True)
-
-    # Represents the modes that are possible. We'll update this later with a
-    # list of possible values.
-    mode = models.CharField(default="honor", max_length=100)
+    course = models.ForeignKey(Course, db_index=True)
+    classroom = models.ForeignKey(Classroom, db_index=True)
+    join_time = models.DateTimeField(auto_now_add=True, null=True, db_index=True)
 
     class Meta:
         unique_together = (('user', 'course_id'),)
@@ -234,20 +195,16 @@ class CourseEnrollment(models.Model):
 
     def __unicode__(self):
         return (
-            "[CourseEnrollment] {}: {} ({}); active: ({})"
-        ).format(self.user, self.course_id, self.created, self.is_active)
+            "[CourseEnrollment] {}: {} {}"
+        ).format(self.user, self.course_id, self.created, self.join_time)
 
 class CourseAccessRole(models.Model):
     """
-    Maps users to org, courses, and roles. Used by student.roles.CourseRole and OrgRole.
-    To establish a user as having a specific role over all courses in the org, create an entry
-    without a course_id.
+    名称:课程管理权限表，用于限制用户的管理权限
+    数据项:用户、课程id、role身份
     """
-
     user = models.ForeignKey(User)
-    # blank org is for global group based roles such as course creator (may be deprecated)
-    org = models.CharField(max_length=64, db_index=True, blank=True)
-    # blank course_id implies org wide role
+    school = models.CharField(max_length=64, db_index=True, blank=True)
     course_id = models.CharField(max_length=255, db_index=True, blank=True)
     role = models.CharField(max_length=64, db_index=True)
 
@@ -279,4 +236,5 @@ class CourseAccessRole(models.Model):
         return self._key < other._key  # pylint: disable=protected-access
 
     def __unicode__(self):
-        return "[CourseAccessRole] user: {}   role: {}   org: {}   course: {}".format(self.user.username, self.role, self.org, self.course_id)
+        return "[CourseAccessRole] user:{} role:{} org:{} course:{}".format(self.user.username, self.role, self.org, self.course_id)
+'''

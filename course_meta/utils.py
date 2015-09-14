@@ -8,7 +8,6 @@ from datetime import datetime
 from django.utils.timezone import UTC
 from django.core.urlresolvers import reverse
 from time_utils import time_format
-from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 def formatDate(date):
     localtz = pytz.timezone(settings.TIME_ZONE)
@@ -99,10 +98,8 @@ def get_course_info(course):
     course_info['thumbnail'] = course.thumbnail
     course_info['course_num'] = course.course_num
     course_info['modified'] = naturalFormatDate(course.modified)
-    course_info['enrollment'] = course_stat.stat.enrollment_total_count(
-        SlashSeparatedCourseKey.from_deprecated_string(course.course_id))
-    course_info['comment'] = course_stat.stat.comment_total_count(
-        SlashSeparatedCourseKey.from_deprecated_string(course.course_id))
+    course_info['enrollment'] = ''
+    course_info['comment'] = ''
     course_info['subtitle'] = course.subtitle
     course_info['about'] = reverse('about_course', args=[course.course_id])
     course_info['start_time'] = time_format(course.start)
