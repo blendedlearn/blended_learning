@@ -22,9 +22,11 @@ django_openid_auth
 django==1.4.18
 django_countries
 django-oauth2-provider==0.2.6.1
+MySQL-python
 pinyin
 # Used for development operation
 watchdog==0.7.1
+
 
 #sudo apt-get install ipython
 #sudo apt-get install python-setuptools
