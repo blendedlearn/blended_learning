@@ -22,7 +22,8 @@ supervisor
 django-social-auth
 django_openid_auth
 django==1.8.4
-
+django-oauth2-provider==0.2.6.1
+pinyin
 # Used for development operation
 watchdog==0.7.1
 
