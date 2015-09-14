@@ -85,3 +85,5 @@ dist
 ._*
 *.map
 
+
+blended_learning/settings.py
