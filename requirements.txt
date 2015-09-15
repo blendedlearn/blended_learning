@@ -17,14 +17,17 @@ networkx==1.7
 nltk==2.0.4
 pip>=1.4
 pytz==2012h
-django-social-auth
+django-social-auth==0.7.28
+python-social-auth==0.2.12
 django_openid_auth
 django==1.4.18
 django_countries
 django-oauth2-provider==0.2.6.1
+MySQL-python
 pinyin
 # Used for development operation
 watchdog==0.7.1
+
 
 #sudo apt-get install ipython
 #sudo apt-get install python-setuptools
