@@ -22,7 +22,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseForbidden,
                          Http404, HttpResponseRedirect)
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render_to_response
 from django.utils.translation import ungettext
 from django.utils.http import cookie_date, base36_to_int
 from django.utils.translation import ugettext as _, get_language
@@ -30,6 +30,9 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+from course_meta.models import Staff
 
 @csrf_exempt
 def index(request):
@@ -92,6 +95,62 @@ def index(request):
         # 现在直接将 response 变量内容直接作为 HTTP Response 响应微信服务器即可，此处为了演示返回内容，直接将响应进行输出
         print response
         return render_to_response('index.html',response)
+
+PASSWORD = "no_password"
+
+def teacher_login(request):
+    if request.method == "GET":
+        return render_to_response('course_meta/teacher_login.html', context_instance=RequestContext(request))
+    else:
+        username = request.POST['username']
+        password = PASSWORD
+
+        user = authenticate(username=username, password=password)
+        if user is None:
+            user = User.objects.create_user(username, "%s@a.com" % username, password)
+            user = authenticate(username=username, password=password)
+        login(request, user)
+        try:
+            staff = Staff.objects.get(user=user)
+            return redirect('my_course')
+        except:
+            staff = Staff(user=user)
+            staff.save()
+            return redirect('teacher_info')
+
+
+@login_required(redirect_field_name='teacher_login')
+def teacher_info(request, edit=False):
+    if request.method == "GET":
+        if edit:
+            user = request.user
+            staff = Staff.objects.get(user=user)
+            content = {
+                "staff":staff,
+            }
+        return render_to_response("course_meta/teacher_info.html", content, context_instance=RequestContext(request))
+    else:
+        user = request.user
+        name = request.POST.get("real_name", None)
+        gender = request.POST.get("gender", None)
+        year_of_birth = request.POST.get("year_of_birth", None)
+        school = request.POST.get("school", None)
+        email = request.POST.get("email", None)
+        try:
+            staff = Staff.objects.get(user=user)
+            staff.name = name
+            staff.gender = gender
+            staff.year_of_birth = int(year_of_birth)
+            staff.school = school
+            staff.email = email
+            staff.save()
+        except:
+            return redirect('teacher_info')
+        return redirect('my_course')
+
+@login_required
+def my_course(request):
+    return render_to_response("course_meta/my_course.html")
 
 @login_required
 def create_course(request):

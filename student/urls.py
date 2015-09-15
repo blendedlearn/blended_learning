@@ -5,6 +5,4 @@
 from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns('student.views',
-    url(r'^teacher_login$', 'teacher_login', name='teacher_login'),
-    url(r'^teacher_info$', 'teacher_info', name='teacher_info'),
 )

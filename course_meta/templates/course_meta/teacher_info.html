@@ -1,0 +1,17 @@
+teacher info
+<html5>
+    <form action="/course_meta/teacher_info" method="POST">
+        {% csrf_token %}
+    <label for="real_name">真实姓名</label>
+    <input type="text" name="real_name" id="real_name" {% if staff %} value="{{staff.real_name}}" {% endif %}/>
+    <label for="gender">性别</label>
+        <input type="text" name="gender" id="gender" {% if staff %} value="{{staff.gender}}" {% endif %}/>
+    <label for="year_of_birth">出身年份</label>
+        <input type="text" name="year_of_birth" id="year_of_birth" {% if staff %} value="{{staff.year_of_birth}}" {% endif %}/>
+    <label for="school">任教学校</label>
+        <input type="text" name="school" id="school" {% if staff %} value="{{staff.school}}" {% endif %}/>
+    <label for="email">联系邮箱</label>
+        <input type="text" name="email" id="email" {% if staff %} value="{{staff.email}}" {% endif %}/>
+        <input type="submit" value="完成"/>
+    </form>
+</html5>
