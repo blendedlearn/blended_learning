@@ -1,0 +1,8 @@
+<script type="text/javascript">
+	document.write('帐户连接成功，正在转接中，本页面 1 秒后将自动关闭。');
+	setTimeout(function() {
+		opener.location.reload();
+		opener.bindSuccess('${provider}账号绑定成功！');
+		window.close();
+	}, 1000);
+</script>

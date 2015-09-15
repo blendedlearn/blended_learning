@@ -10,6 +10,7 @@ from django.db import transaction
 from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 
+# from django_future.csrf import ensure_csrf_cookie
 from social.pipeline.social_auth import social_user
 from social_auth.exceptions import NotAllowedToDisconnect
 from social_auth.models import UserSocialAuth
@@ -18,11 +19,12 @@ from social_oauth.utils import (check_can_unbind_social_account, get_strategy,
                                 get_uid, get_validate_nickname,
                                 new_associate_user)
 from student.models import UserProfile
-from student.views import try_change_enrollment, _create_user_invite
+# from student.views import try_change_enrollment, _create_user_invite
 from util.json_request import JsonResponse
 from django.shortcuts import render_to_response
 from social_oauth.utils import PROVIDER_MAPPER, clean_session
 from util.validators import track_log, validate_password, validate_username
+from course_meta.models import Classroom
 
 
 logger = logging.getLogger(__name__)
@@ -49,7 +51,7 @@ def new_association(request):
     _new_association(strategy, detail, request.user)
     provider_platform = PROVIDER_MAPPER.get(provider, {}).get('platform', u'三方')
     context = {'provider': provider_platform}
-    return render_to_response('xuetangx/oauth/oauth_bind_success.html', context)
+    return render_to_response('oauth/oauth_bind_success.html', context)
 
 
 def _unbind_social(user, provider):
@@ -186,6 +188,7 @@ def _get_or_create_oauth_user(strategy, detail, request=None, mobile_client=Fals
     user.backend = "%s.%s" % (backend.__module__, backend.__class__.__name__)
     return (user, _created)
 
+# @ensure_csrf_cookie
 def authentication_success(request):
     '''
     新用户注册时
@@ -193,15 +196,15 @@ def authentication_success(request):
     此时django的用户应该是未登录状态 request.user.is_authenticated() is False
     '''
     detail = request.session.get('authentication_user_detail')
-    inviter_id = request.session.get('inviter_id')
+    # inviter_id = request.session.get('inviter_id')
     provider = detail['social_provider']
     strategy = get_strategy(provider)
     enrollment_action = request.session.get('enrollment_action')
-    course_id = request.session.get('course_id')
+    classroom_id = request.session.get('classroom_id')
     user, _created = _get_or_create_oauth_user(strategy, detail, request)
-    # 如果有邀请
-    if inviter_id:
-        _create_user_invite(inviter_id, user)
+    # # 如果有邀请
+    # if inviter_id:
+    #     _create_user_invite(inviter_id, user)
     login(request, user)
     user_profile = user.profile
     user_profile.last_login_ip = request.META.get('REMOTE_ADDR', None)
@@ -211,8 +214,12 @@ def authentication_success(request):
         request.method = 'POST'
         request.POST = request.POST.copy()
         request.POST['enrollment_action'] = enrollment_action
-        request.POST['course_id'] = course_id
-        try_change_enrollment(request)
+        request.POST['classroom_id'] = classroom_id
+
+        classroom = Classroom.objects.get(id = classroom_id)
+        classroom.user = request.user
+        classroom.save()
+        # try_change_enrollment(request)
     next_url = request.session.get('next', '')
     context = {'next': next_url}    
 
@@ -221,7 +228,7 @@ def authentication_success(request):
         'uid': user.id,
         'provider': strategy.backend.name,
     })
-    return render_to_response('xuetangx/oauth/oauth_login_success.html', context)
+    return render_to_response('oauth/oauth_login_success.html', context)
 
 
 @clean_session(['next', 'enrollment_action', 'course_id'])
@@ -231,7 +238,7 @@ def oauth_login(request, backend):
     '''
     context = {'next': request.session.get('next', '')}
     if request.user.is_authenticated():
-        return render_to_response('xuetangx/oauth/oauth_login_success.html', context)
+        return render_to_response('oauth/oauth_login_success.html', context)
     #TODO: oauth登录失败的处理, 跳转到oauth失败的页面
     return auth(request, backend)
 
@@ -243,7 +250,7 @@ def oauth_register(request, backend):
     '''
     context = {'next': request.session.get('next', '')}
     if request.user.is_authenticated():
-        return render_to_response('xuetangx/oauth/oauth_login_success.html', context)
+        return render_to_response('oauth/oauth_login_success.html', context)
     return auth(request, backend)
 
 @clean_session(['next',])

@@ -1,0 +1,1 @@
+from social.backends.chinamobile import ChinaMobileOAuth as ChinaMobileBackend

@@ -1,0 +1,25 @@
+ <html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<script>
+(function() {
+var next = '${next}';
+var father = window.opener;
+var http = "http";
+if(father.location.href.indexOf("https")>-1){
+	http = "https";	
+}
+var url = http+"://www.xuetangx.com"+next;
+if(next.length<=0){
+url = father.location.href;
+}
+father.location.href = url;
+setTimeout(window.close, 500);
+}())
+</script>
+</body>
+</html> 
+

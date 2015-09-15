@@ -1,0 +1,146 @@
+[
+	{
+		"fields": {
+			"name": "计算机"
+		},
+		"model": "course_meta.CourseCategory",
+		"pk": 1
+	},
+	{
+		"fields": {
+			"name": "生命科学"
+		},
+		"model": "course_meta.CourseCategory",
+		"pk": 2
+	},
+	{
+		"fields": {
+			"name": "数学"
+		},
+		"model": "course_meta.CourseCategory",
+		"pk": 3
+	},
+
+	{
+		"fields": {
+			"status": 0,
+    		"course_id": "xuetangX/testcs1/2014_T1",
+    		"course_num": "testcs1",
+            "org": "xuetangX",
+            "name": "测试课程1",
+            "run": "2014_T1",
+        	"subtitle": "",
+     		"create_time": "2013-06-23 10:29:24",
+        	"modified": "2013-06-23 10:29:24",
+           	"start": "2013-12-20 10:29:24",
+     		"intro_video": "", 
+       		"thumbnail": "/c4x/tsinghuaX/DLYL/asset/images_course_image.jpg",
+ 			"video_thumbnail": "",
+          	"effort": "",
+          	"length": "",
+            "quiz": "",
+   			"prerequisites": "Add information about course prerequisites here.", 
+           	"about": "<p>Include your long course description here. </p>",
+        	"chapters": "", 
+      		"serialized": 0,
+           	"owner": "xuetangX",
+    		"original_url": "",
+    		"category": [1]
+		},
+		"model": "course_meta.Course",
+		"pk" : 1
+	},
+	{
+		"fields": {
+			"status": 0,
+    		"course_id": "xuetangX/testcs2/2014_T1",
+    		"course_num": "testcs2",
+            "org": "xuetangX",
+            "name": "测试课程2",
+            "run": "2014_T1",
+        	"subtitle": "",
+     		"create_time": "2013-06-23 10:29:24",
+        	"modified": "2013-06-23 10:29:24",
+           	"start": "2013-12-20 10:29:24",
+     		"intro_video": "", 
+       		"thumbnail": "/c4x/tsinghuaX/DLYL/asset/images_course_image.jpg",
+ 			"video_thumbnail": "",
+          	"effort": "",
+          	"length": "",
+            "quiz": "",
+   			"prerequisites": "Add information about course prerequisites here.", 
+           	"about": "<p>Include your long course description here. </p>",
+        	"chapters": "", 
+      		"serialized": 0,
+           	"owner": "xuetangX",
+    		"original_url": "",
+    		"category": [1, 2]
+		},
+		"model": "course_meta.Course",
+		"pk" : 2
+	},
+
+	{
+		"fields": {
+			"name": "云计算",
+			"introduction": "攻城狮？还在为服务器、数据库神马的焦头烂额咩？丢给云，即可专注于核心代码开发！"
+		},
+		"model": "course_meta.KnowledgeMap",
+		"pk": 1
+	},
+
+	{
+		"fields": {
+			"tag": "tag 1",
+       		"level": "入门",
+    		"priority": 0,
+			"course_id": 1,
+   			"map_id": 1
+		},
+		"model": "course_meta.CourseInKnowledgeMap",
+		"pk": 1
+	},
+	{
+		"fields": {
+			"tag": "tag 2",
+       		"level": "进阶",
+    		"priority": 0,
+			"course_id": 2,
+   			"map_id": 1
+		},
+		"model": "course_meta.CourseInKnowledgeMap",
+		"pk": 2
+	},
+
+	{
+		"fields": {
+			"course": 1
+		},
+		"model": "course_meta.HomepageCourses",
+		"pk": 1
+	},
+
+	{
+		"fields": {
+			"user": 1,
+			"course_id": "xuetangX/testcs1/2014_T1",
+  			"created": "2014-05-15 11:09:35",
+			"is_active": 1,
+     		"mode": "honor"
+		},
+		"model": "student.CourseEnrollment",
+		"pk": 1
+	},
+	{
+		"fields": {
+			"user": 1,
+			"course_id": "xuetangX/testcs2/2014_T1",
+  			"created": "2014-05-15 11:09:35",
+			"is_active": 1,
+     		"mode": "honor"
+		},
+		"model": "student.CourseEnrollment",
+		"pk": 2
+	}
+
+]

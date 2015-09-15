@@ -133,12 +133,14 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'social_auth',
-    # 'social_oauth',
     'south',
     'student',
     'cards',
     'course_meta',
+    'social_auth',
+    'social.apps.django_app.default',
+    'social_oauth',
+
     # OAuth2 Provider
     'provider',
     'provider.oauth2',
@@ -199,7 +201,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.weixin.WeixinBackend',
     'social_auth.backends.contrib.weixin.WeixinAPPBackend',
     'social_auth.backends.contrib.chinamobile.ChinaMobileBackend',
-    'social_oauth.backends.OAuth2Backend',
+    # 'social_oauth.backends.OAuth2Backend',
     # must add，or django default user cant login
     'social_oauth.backends.NickNameBackend',
     'social_oauth.backends.PhoneNumberBackend',

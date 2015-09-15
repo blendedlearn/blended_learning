@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
@@ -14,5 +15,26 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^$','weixin.views.index'),
+    # url(r'', include('blended_learning.urls')),
+    # url(r'', include('student.urls')),
+    # url(r'', include('cards.url')),
+    # url(r'', include('course_meta.urls')),
+    url(r'', include('social_auth.urls')),
+    url(r'^$','student.views.index'),
+    url(r'^create_classroom$', 'student.views.create_classroom', name='create_classroom'),
+    url(r'^delete_classroom$', 'student.views.delete_classroom', name='delete_classroom'),
+    url(r'^logout_user$', 'student.views.logout_user', name='logout_user'),
+    # oauth default urls
+    url(r'^complete/(?P<backend>[^/]+)/$', 'social_auth.views.complete', name='socialauth_complete'),
+    url(r'^associate/(?P<backend>[^/]+)/$', 'social_auth.views.auth', name='socialauth_associate_begin'),
+    url(r'^associate/complete/(?P<backend>[^/]+)/$', 'social_auth.views.complete', name='socialauth_associate_complete'),
+    url(r'^disconnect/(?P<backend>[^/]+)/$', 'social_auth.views.disconnect', name='socialauth_disconnect'),
+    url(r'^disconnect/(?P<backend>[^/]+)/(?P<association_id>[^/]+)/$', 'social_auth.views.disconnect', name='socialauth_disconnect_individual'),
+
+    # our oauth urls
+    url(r'^login/(?P<backend>[^/]+)/$', 'social_oauth.views.oauth_login', name='oauth_login'),
+    url(r'^register/(?P<backend>[^/]+)/$', 'social_oauth.views.oauth_register', name='oauth_register'),
+    url(r'^bind/(?P<backend>[^/]+)/$', 'social_oauth.views.oauth_bind', name='oauth_bind'),
+    url(r'^oauth/newassociation$', 'social_oauth.views.new_association', name='new_association'),
+    url(r'^oauth/authentication/success$', 'social_oauth.views.authentication_success', name='authentication_success'),
 )

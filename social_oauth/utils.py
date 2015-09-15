@@ -11,9 +11,11 @@ from social.exceptions import AuthAlreadyAssociated
 from social.pipeline.social_auth import associate_user
 from social_auth.exceptions import NotAllowedToDisconnect
 from social_auth.models import UserSocialAuth
-# from social_auth.views import load_strategy
-from util.string_utils import ALL_NUMBER_RE, PHONE_NUMBER_RE
+from social_auth.views import load_strategy
 
+ALL_NUMBER_RE = re.compile(r'^\d+$')
+USERNAME_RE = re.compile(u'^[\u4e00-\u9fa5-\w]+$')
+PHONE_NUMBER_RE = re.compile(r'^1[0-9]{10}$')
 
 PROVIDER_MAPPER = {
     'weibo': {
@@ -44,13 +46,13 @@ PROVIDER_MAPPER = {
 }
 
 
-# def get_strategy(provider):
-#     '''
-#     provider:
-#         type: str
-#         example: weibo
-#     '''
-#     return load_strategy(backend=provider)
+def get_strategy(provider):
+    '''
+    provider:
+        type: str
+        example: weibo
+    '''
+    return load_strategy(backend=provider)
 
 
 def get_uid(strategy, detail):
