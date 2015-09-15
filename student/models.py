@@ -46,7 +46,7 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(User, unique=True, db_index=True, related_name='profile')
     name = models.CharField(blank=True, max_length=255, db_index=True)
-    nickname = models.CharField(blank=True, unique=True, max_length=255, db_index=True, default='')
+    nickname = models.CharField(blank=True, max_length=255, db_index=True, default='')
     phone_number = models.CharField(blank=True, null=True, unique=True, max_length=50, db_index=True)
     avatar = models.URLField(blank=True, max_length=255, default='')
     unique_code = models.CharField(blank=True, max_length=20, null=True, unique=True, db_index=True)

@@ -18,14 +18,16 @@ from django.contrib.auth.views import password_reset_confirm, password_reset_com
 from django.core.cache import cache
 from django.core.context_processors import csrf, get_token as csrf_get_token
 from django.shortcuts import render
-from django.views.csrf import ensure_csrf_cookie, csrf_exempt
-from django.shortcuts import redirect
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.shortcuts import redirect, render_to_response
 from django.core.urlresolvers import reverse
 from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseForbidden,
                          Http404, HttpResponseRedirect)
+from django.template import RequestContext
 
+from course_meta.models import Staff, Course, CourseStaffRelationship
+from student.models import UserProfile
 
-from course_meta.models import Staff, Course, CourseGroup, CourseCategory, CourseStaffRelationship
 @ensure_csrf_cookie
 def signin_user(request):
     #login方法
@@ -37,45 +39,50 @@ def register_user(request, extra_context=None):
     if request.user.is_authenticated():
         return redirect(reverse('dashboard'))
 
+PASSWORD = "no_password"
+
 def teacher_login(request):
     if request.method == "GET":
-        response_dict = {'err_msg': 'false','message': 'request method error, need post'}
-        return render_to_response('teacher_login.html',response_dict)
+        return render_to_response('student/teacher_login.html', context_instance=RequestContext(request))
     else:
-        unique_code = request.POST.get(unique_code, None)
-        if unique_code:
-            user_profile, created = UserProfile.objects.get_or_created(unique_code=unique_code)
-            if created or not user_profile.name:
-                return render_to_response('teacher_info.html')
-            else:
-                return render_to_response('create_course.html')
-        else:
-            response_dict = {'err_msg': 'false','message': 'parameter error, need unique_code'}
-            return render_to_response('teacher_login.html',response_dict)
+        username = request.POST['username']
+        password = PASSWORD
 
+        user = authenticate(username=username, password=password)
+        if user is None:
+            user = User.objects.create_user(username, "%s@a.com" % username, password)
+            user = authenticate(username=username, password=password)
+        login(request, user)
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+        except:
+            user_profile = UserProfile(user=user)
+            user_profile.save()
+
+        if not user_profile.name:
+            return redirect('teacher_info')
+        else:
+            return redirect('create_course')
 
 @login_required(redirect_field_name='teacher_login')
 def teacher_info(request):
     if request.method == "GET":
-        response_dict = {'err_msg': 'false','message': 'request method error, need post'}
-        return render_to_response('teacher_login.html',response_dict)
+        return render_to_response("student/teacher_info.html", context_instance=RequestContext(request))
     else:
-        unique_code = request.POST.get(unique_code, None)
-        name = request.POST.get(name, None)
-        gender = request.POST.get(gender, None)
-        year_of_birth = int(request.POST.get(year_of_birth, None))
-        email = request.POST.get(email, None)
-        if unique_code:
-            user_profile = UserProfile.objects.get(unique_code=unique_code)
+        user = request.user
+        name = request.POST.get("real_name", None)
+        gender = request.POST.get("gender", None)
+        year_of_birth = request.POST.get("year_of_birth", None)
+        school_number = request.POST.get("school_number", None)
+        email = request.POST.get("email", None)
+        try:
+            user_profile = UserProfile.objects.get(user=user)
             user_profile.name = name
             user_profile.gender = gender
             user_profile.year_of_birth = int(year_of_birth)
+            user_profile.school_number = school_number
             user_profile.email = email
             user_profile.save()
-            response_dict = {
-            }
-            return render_to_response('create_course.html', response_dict)
-        else:
-            response_dict = {'err_msg': 'false','message': 'parameter error, need unique_code'}
-            return render_to_response('teacher_login.html', response_dict)
-
+        except:
+            return redirect('teacher_info')
+        return redirect('create_course')

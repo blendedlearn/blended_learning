@@ -96,4 +96,7 @@ def index(request):
 @login_required
 def create_course(request):
     #老师创建课程的方法
+    return render_to_response("course_meta/create_course.html")
+
+def invite_student(request):
     pass

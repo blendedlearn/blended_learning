@@ -16,5 +16,5 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^student/', include('student.urls')),
     url(r'^course_meta/', include('course_meta.urls')),
-    url(r'^$','weixin.views.index'),
+    #url(r'^$','weixin.views.index'),
 )
