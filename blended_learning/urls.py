@@ -14,5 +14,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
+    url(r'^student/', include('student.urls')),
+    url(r'^course_meta/', include('course_meta.urls')),
     url(r'^$','weixin.views.index'),
 )

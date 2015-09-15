@@ -36,3 +36,46 @@ def register_user(request, extra_context=None):
     pass
     if request.user.is_authenticated():
         return redirect(reverse('dashboard'))
+
+def teacher_login(request):
+    if request.method == "GET":
+        response_dict = {'err_msg': 'false','message': 'request method error, need post'}
+        return render_to_response('teacher_login.html',response_dict)
+    else:
+        unique_code = request.POST.get(unique_code, None)
+        if unique_code:
+            user_profile, created = UserProfile.objects.get_or_created(unique_code=unique_code)
+            if created or not user_profile.name:
+                return render_to_response('teacher_info.html')
+            else:
+                return render_to_response('create_course.html')
+        else:
+            response_dict = {'err_msg': 'false','message': 'parameter error, need unique_code'}
+            return render_to_response('teacher_login.html',response_dict)
+
+
+@login_required(redirect_field_name='teacher_login')
+def teacher_info(request):
+    if request.method == "GET":
+        response_dict = {'err_msg': 'false','message': 'request method error, need post'}
+        return render_to_response('teacher_login.html',response_dict)
+    else:
+        unique_code = request.POST.get(unique_code, None)
+        name = request.POST.get(name, None)
+        gender = request.POST.get(gender, None)
+        year_of_birth = int(request.POST.get(year_of_birth, None))
+        email = request.POST.get(email, None)
+        if unique_code:
+            user_profile = UserProfile.objects.get(unique_code=unique_code)
+            user_profile.name = name
+            user_profile.gender = gender
+            user_profile.year_of_birth = int(year_of_birth)
+            user_profile.email = email
+            user_profile.save()
+            response_dict = {
+            }
+            return render_to_response('create_course.html', response_dict)
+        else:
+            response_dict = {'err_msg': 'false','message': 'parameter error, need unique_code'}
+            return render_to_response('teacher_login.html', response_dict)
+
