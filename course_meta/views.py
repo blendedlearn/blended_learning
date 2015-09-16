@@ -32,7 +32,7 @@ from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from course_meta.models import Staff
+from course_meta.models import Staff, Course, Classroom,  CourseStaffRelationship
 
 @csrf_exempt
 def index(request):
@@ -178,9 +178,10 @@ def create_course(request):
     else:
         user = request.user
         staff = Staff.objects.get(user=user)
-        class_name_string = request.POST.get('class_name_string', None)
+        course_name = request.POST.get('course_name', None)
+        classroom_name_string = request.POST.get('classroom_name_string', None)
 
-        course = Course(staff=staff, name=class_name)
+        course = Course(name=course_name)
         course.save()
         course_staff_relationship = CourseStaffRelationship(course=course,
                 staff=staff,
@@ -188,9 +189,9 @@ def create_course(request):
         )
         course_staff_relationship.save()
 
-        class_name_list = class_name_string.split(";")
-        for class_name in class_name_list:
-            classroom = Classroom(course=course, users=users, name=class_name)
+        classroom_name_list = classroom_name_string.split(";")
+        for classroom_name in classroom_name_list:
+            classroom = Classroom(course=course, name=classroom_name)
             classroom.save()
         return redirect('my_course')
 

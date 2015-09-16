@@ -5,17 +5,22 @@
 </head>
 <body>
 <h1>create course</h1>
-<form action="{% url create_course %}" method="POST">
+<form id="create_course_form" action="{% url create_course %}" method="POST">
     {% csrf_token %}
     <label for="course_name">课程名称</label>
     <input type="text" name="course_name" id="course_name">
 
 <h2>班级管理</h2>
-    <ul>
-        <li><input type="text" ="class_name"></li>
+    <ul class="class_ul">
+        <input type="hidden" name="classroom_name_string" id="classroom_name_string">
+        <li><input class="classroom_name" type="text"></li>
+        <a href="javascript:add_class_input()">+++</a>
     </ul>
-</body>
+    <p>
+    <a href="javascript:submit_course()">submit course</a>
+    </p>
 
-    <input type="submit" value="完成">
+<!-- <input type="submit" value="完成"> -->
 </form>
+</body>
 </html5>
