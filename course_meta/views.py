@@ -122,16 +122,19 @@ def teacher_login(request):
 @login_required(redirect_field_name='teacher_login')
 def teacher_info(request, edit=False):
     if request.method == "GET":
+        content = {
+                "edit":edit,
+        }
         if edit:
             user = request.user
             staff = Staff.objects.get(user=user)
-            content = {
+            content.update({
                 "staff":staff,
-            }
+            }) 
         return render_to_response("course_meta/teacher_info.html", content, context_instance=RequestContext(request))
     else:
         user = request.user
-        name = request.POST.get("real_name", None)
+        name = request.POST.get("name", None)
         gender = request.POST.get("gender", None)
         year_of_birth = request.POST.get("year_of_birth", None)
         school = request.POST.get("school", None)
@@ -147,6 +150,14 @@ def teacher_info(request, edit=False):
         except:
             return redirect('teacher_info')
         return redirect('my_course')
+
+def staff_info(request):
+    user = request.user
+    staff = Staff.objects.get(user=user)
+    content = {
+        'staff':staff
+    }
+    return render_to_response("course_meta/staff_info.html", content, context_instance=RequestContext(request))
 
 @login_required
 def my_course(request):

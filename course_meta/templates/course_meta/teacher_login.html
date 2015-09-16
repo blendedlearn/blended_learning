@@ -1,6 +1,6 @@
 teacher login
 <html5>
-<form action="/course_meta/teacher_login" method="POST">
+<form action="{% url teacher_login %}" method="POST">
         {% csrf_token %}
     <label for="user_name">username</label>
         <input type="text" name="username" id="user_name"/>
