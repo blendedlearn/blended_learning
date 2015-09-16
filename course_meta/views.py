@@ -161,12 +161,39 @@ def staff_info(request):
 
 @login_required
 def my_course(request):
-    return render_to_response("course_meta/my_course.html")
+    content = {}
+    return render_to_response("course_meta/my_course.html", content, context_instance=RequestContext(request))
 
 @login_required
 def create_course(request):
     #老师创建课程的方法
-    return render_to_response("course_meta/create_course.html")
+    if request.method == "GET":
+        user = request.user
+        staff = Staff.objects.get(user=user)
+        content = {
+                "user":user,
+                "staff":staff,
+        }
+        return render_to_response("course_meta/create_course.html", content, context_instance=RequestContext(request))
+    else:
+        user = request.user
+        staff = Staff.objects.get(user=user)
+        class_name_string = request.POST.get('class_name_string', None)
+
+        course = Course(staff=staff, name=class_name)
+        course.save()
+        course_staff_relationship = CourseStaffRelationship(course=course,
+                staff=staff,
+                role=1,       #teacher from course_meta.models.py
+        )
+        course_staff_relationship.save()
+
+        class_name_list = class_name_string.split(";")
+        for class_name in class_name_list:
+            classroom = Classroom(course=course, users=users, name=class_name)
+            classroom.save()
+        return redirect('my_course')
+
 
 def invite_student(request):
     pass

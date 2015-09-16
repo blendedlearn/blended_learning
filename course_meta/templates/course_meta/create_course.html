@@ -1,1 +1,21 @@
-create course
+<html5>
+<head>
+    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/course_management.js"></script>
+</head>
+<body>
+<h1>create course</h1>
+<form action="{% url create_course %}" method="POST">
+    {% csrf_token %}
+    <label for="course_name">课程名称</label>
+    <input type="text" name="course_name" id="course_name">
+
+<h2>班级管理</h2>
+    <ul>
+        <li><input type="text" ="class_name"></li>
+    </ul>
+</body>
+
+    <input type="submit" value="完成">
+</form>
+</html5>
