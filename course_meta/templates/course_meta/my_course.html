@@ -4,7 +4,9 @@
    {% for course in courses %}
    <h3>{{course.name}}    <a href="{% url edit_course course.id %}">edit</a> </h3>
         {% for classroom in course.classrooms %}
-            <p>{{classroom.name}}</p>
+        <p>{{classroom.name}}
+        <a href="{% url manage_classroom classroom.id %}">manage</a>
+        </p>
         {% endfor %}
    {% endfor %}
 <p>

@@ -38,6 +38,7 @@ from course_meta.models_utils import has_course_manage_permission
 from course_meta.ajax_views import change_course_name, change_classroom_name
 import json
 from types import IntType
+from student.models_utils import staff_info_to_userprofile
 
 @csrf_exempt
 def index(request):
@@ -152,6 +153,7 @@ def teacher_info(request, edit=False):
             staff.school = school
             staff.email = email
             staff.save()
+            staff_info_to_userprofile(staff)
         except:
             return redirect('teacher_info')
         return redirect('my_course')
@@ -178,6 +180,13 @@ def my_course(request):
                 "staff":staff,
         }
         return render_to_response("course_meta/my_course.html", content, context_instance=RequestContext(request))
+
+@login_required
+def manage_classroom(request, course_id):
+    if request.method == "GET":
+        user = request.user
+        content = {}
+        return render_to_response("course_meta/manage_classroom.html", content, context_instance=RequestContext(request))
 
 @login_required
 def edit_course(request, course_id):
@@ -228,8 +237,6 @@ def edit_course(request, course_id):
         for edit_classroom_name in edit_classroom_name_list:
             classroom_id, classroom_name = edit_classroom_name_list.split(":")
             classroom = Classroom.objects.get(pk=classroom_id)
-
-
         return redirect('my_course')
 
 @login_required
