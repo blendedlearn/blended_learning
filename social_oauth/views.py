@@ -23,7 +23,7 @@ from student.models import UserProfile
 from util.json_request import JsonResponse
 from django.shortcuts import render_to_response
 from social_oauth.utils import PROVIDER_MAPPER, clean_session
-from util.validators import track_log, validate_password, validate_username
+# from util.validators import track_log, validate_password, validate_username
 from course_meta.models import Classroom
 
 
@@ -180,11 +180,11 @@ def _get_or_create_oauth_user(strategy, detail, request=None, mobile_client=Fals
         # Track this user register event in oauth
         if not mobile_client:  # do not track api client log 2015.5.26
             event_type = 'weixinapp.user.register_success' if created_on == 'weixinapp' else 'oauth.user.register_success'
-            track_log(request, event_type, {
-                'success': True,
-                'uid': user.id,
-                'provider': backend.name,
-            })
+            # track_log(request, event_type, {
+            #     'success': True,
+            #     'uid': user.id,
+            #     'provider': backend.name,
+            # })
     user.backend = "%s.%s" % (backend.__module__, backend.__class__.__name__)
     return (user, _created)
 
@@ -223,11 +223,11 @@ def authentication_success(request):
     next_url = request.session.get('next', '')
     context = {'next': next_url}    
 
-    track_log(request, 'oauth.user.login_success', {
-        'success': True,
-        'uid': user.id,
-        'provider': strategy.backend.name,
-    })
+    # track_log(request, 'oauth.user.login_success', {
+    #     'success': True,
+    #     'uid': user.id,
+    #     'provider': strategy.backend.name,
+    # })
     return render_to_response('oauth/oauth_login_success.html', context)
 
 

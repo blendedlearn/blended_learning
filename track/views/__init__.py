@@ -12,7 +12,7 @@ from django.conf import settings
 
 from django_future.csrf import ensure_csrf_cookie
 
-from edxmako.shortcuts import render_to_response
+from django.shortcuts import render_to_response
 
 from track import tracker
 from track import contexts

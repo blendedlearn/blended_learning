@@ -19,7 +19,7 @@ from django.contrib.auth.views import password_reset_confirm, password_reset_com
 from django.core.cache import cache
 from django.core.context_processors import csrf, get_token as csrf_get_token
 from django.shortcuts import render
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django_future.csrf import ensure_csrf_cookie, csrf_exempt
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
@@ -30,7 +30,8 @@ from student.models import UserProfile
 from util.json_request import JsonResponse
 
 def index(request):
-    return render_to_response('index.html')
+    context = {"str": "dame"}
+    return HttpResponse('templates/index.html', context)
 
 # @ensure_csrf_cookie
 def login_user(request):

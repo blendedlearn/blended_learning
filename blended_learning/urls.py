@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
-
+from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -19,6 +20,7 @@ urlpatterns = patterns('',
     # url(r'', include('student.urls')),
     # url(r'', include('cards.url')),
     # url(r'', include('course_meta.urls')),
+    url(r'^$', 'student.views.index'),
     url(r'', include('social_auth.urls')),
     url(r'^$','student.views.index'),
     url(r'^create_classroom$', 'student.views.create_classroom', name='create_classroom'),
@@ -38,3 +40,7 @@ urlpatterns = patterns('',
     url(r'^oauth/newassociation$', 'social_oauth.views.new_association', name='new_association'),
     url(r'^oauth/authentication/success$', 'social_oauth.views.authentication_success', name='authentication_success'),
 )
+if settings.DEBUG:
+    urlpatterns += patterns('django.contrib.staticfiles.views',
+        url(r'^static/(?P<path>.*)$','server'),
+        )
