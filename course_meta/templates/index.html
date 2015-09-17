@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Required meta tags-->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<!-- Your app title -->
+	<title>雨课堂记得css文件目前是放在sass目录下</title>
+	<!-- Path to Framework7 iOS CSS theme styles-->
+	<link rel="stylesheet" href="../../static/sass/framework7_ios.css">
+	<!-- Path to Framework7 iOS related color styles -->
+	<link rel="stylesheet" href="../../static/css/framework7_ios_colors.css">
+	<!-- Path to your custom app styles-->
+	<link rel="stylesheet" href="../../static/css/teacher.css">
+	<script type="text/javascript">
+	var appConfig = {
+		userLoggedIn: true,
+		userInfoFinished: false
+	}
+	</script>
+</head>
+<body>
+	<!-- Views -->
+	<div class="views">
+		<!-- Your main view, should have "view-main" class -->
+		<div class="view view-main">
+			<!-- Top Navbar-->
+			<div class="navbar">
+				<div class="navbar-inner">
+					<!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+					<div class="center sliding">欢迎使用雨课堂</div>
+					<div class="right">
+			            <a href="login.html" class="link">登录</a>
+			        </div>
+			    </div>
+			</div>
+			<!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
+			<div class="pages navbar-through toolbar-through">
+				<!-- Page, "data-page" contains page name -->
+				<div data-page="index" class="page">
+					<!-- Scrollable page content -->
+					<div class="page-content">
+						<p class="login_wrap"><a href="login.html" class="button button-fill">欢迎使用雨课堂</a></p>
+						<p class="tac">点击授权微信直接登录</p>
+						<a href="course.html" class="link">快捷调试页面入口</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Bottom Toolbar-->
+			<div class="toolbar">
+				<div class="toolbar-inner">
+					<!-- Toolbar links -->
+					<a href="#" class="link">左功能</a>
+					<a href="#" class="link">右功能</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- <div class="popup popup-userinfo">
+		<div class="content-block">
+			<p><a href="#" class="close-popup">⬅️</a></p>
+			<p>个人信息</p>
+			<p>姓名...</p>
+			<a id="pop_to_edit_userinfo" href="userinfo.html" class="close-popup">管理个人信息</a>
+		</div>
+	</div> -->
+
+	<script src="../../static/js/teacherconfig.js"></script>
+	<script src="../../static/js/libs/require.js" data-main="./src/teacher"></script>
+</body>
+</html> 

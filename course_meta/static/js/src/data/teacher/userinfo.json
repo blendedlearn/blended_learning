@@ -1,0 +1,9 @@
+{
+	"name": "john",
+	"gender": "female",
+	"male": false,
+	"female": true,
+	"year_of_birth": "2015-09-15",
+	"school": "清华",
+	"email": "jhon@ts"
+}

@@ -1,0 +1,96 @@
+<div class="navbar">
+  <div class="navbar-inner">
+    <% if(userinfoHasBack){ %>
+    <div class="left">
+      <a href="#" class="back link">
+        <i class="icon icon-back-blue"></i>
+        <span>后退</span>
+      </a>
+    </div>
+    <% } %>
+    <div class="center sliding">填写个人信息</div>
+    <div class="right">
+      <a href="#" class="link icon-only open-panel"><i class="icon icon-bars-blue"></i></a>
+    </div>
+  </div>
+</div>
+<div data-page="edituserinfo" class="page no-toolbar">
+  <div class="page-content">
+    <div class="content-block">
+      <form id="form_userinfo" class="list-block">
+        <ul>
+          <!-- Text inputs -->
+          <li>
+            <div class="item-content">
+              <div class="item-media"><i class="icon icon-form-name"></i></div>
+              <div class="item-inner">
+                <div class="item-title label">姓名</div>
+                <div class="item-input">
+                  <input name="name" type="text" placeholder="如：张三" value="<%= name %>">
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!-- Select -->
+          <li>
+            <div class="item-content">
+              <div class="item-media"><i class="icon icon-form-gender"></i></div>
+              <div class="item-inner">
+                <div class="item-title label">性别</div>
+                <div class="item-input">
+                  <select name="gender" value="<%= gender %>">
+                    <option <%if(gender == 'male'){ %> selected <% } %> value="male">男</option>
+                    <option <%if(gender == 'female'){ %> selected <% } %>  value="female">女</option>
+                  </select>
+                  
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!-- Date -->
+          <li>
+            <div class="item-content">
+              <div class="item-media"><i class="icon icon-form-calendar"></i></div>
+              <div class="item-inner">
+                <div class="item-title label">出生日期</div>
+                <div class="item-input">
+                  <input name="year_of_birth" type="date" value="<%= year_of_birth %>">
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="item-content">
+              <div class="item-media"><i class="icon icon-form-url"></i></div>
+              <div class="item-inner">
+                <div class="item-title label">任职学校</div>
+                <div class="item-input">
+                  <input name="school" type="text" placeholder="如：清华大学" value="<%= school %>">
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="item-content">
+              <div class="item-media"><i class="icon icon-form-email"></i></div>
+              <div class="item-inner">
+                <div class="item-title label">邮箱</div>
+                <div class="item-input">
+                  <input name="email" type="email" value="<%= email %>">
+                </div>
+              </div>
+            </div>
+          </li>
+          
+        </ul>
+
+        <p class="login_wrap"><a id="userinfo_confirm" href="#" class="button button-fill">确认</a></p>
+
+      </form>
+    </div>
+  </div>
+</div>
