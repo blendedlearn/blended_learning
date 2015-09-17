@@ -38,3 +38,26 @@ def change_course_name(user, course_id, course_name):
         'status': OPERATION_SUCCESS
     }
     return json.dumps(ajax_data)
+
+def change_classroom_name(user, classroom_id, classroom_name):
+    try:
+        classroom = Classroom.objects.get(pk=classroom_id)
+    except:
+        ajax_data = {
+            'status': OPERATION_FAIL
+        }
+        return json.dumps(ajax_data)
+
+    course_id = classroom.course.id
+    if not has_course_manage_permission(user, course_id):
+        ajax_data = {
+            'status': OPERATION_FAIL
+        }
+        return json.dumps(ajax_data)
+    classroom.name = classroom_name
+    classroom.save()
+
+    ajax_data = {
+        'status': OPERATION_SUCCESS
+    }
+    return json.dumps(ajax_data)

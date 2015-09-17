@@ -35,7 +35,7 @@ from django.template import RequestContext
 from course_meta.models import Staff, Course, Classroom,  CourseStaffRelationship
 
 from course_meta.models_utils import has_course_manage_permission
-from course_meta.ajax_views import change_course_name
+from course_meta.ajax_views import change_course_name, change_classroom_name
 import json
 from types import IntType
 
@@ -266,8 +266,9 @@ def invite_student(request):
 
 AJAX_FUNC_DICT = {
     "change_course_name":"change_course_name(user, course_id, course_name)",
-    "add_tta":"add_tta(name, sn, ip, info)",
+    "change_classroom_name":"change_classroom_name(user, classroom_id, classroom_name)",
 }
+
 
 @csrf_exempt
 @login_required
@@ -277,6 +278,8 @@ def ajax(request):
     ctype = _p.get("type", None)
     course_id = _p.get("course_id", None)
     course_name = _p.get("course_name", None)
+    classroom_id = _p.get("classroom_id", None)
+    classroom_name = _p.get("classroom_name", None)
     if not ctype:
         raise Http404
     if ctype in AJAX_FUNC_DICT:

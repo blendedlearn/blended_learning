@@ -6,23 +6,21 @@
 </head>
 <body>
 <h1>edit course</h1>
+<p>
+说明：直接点击课程名、班级名修改。
+</p>
 
 <p>
-<p id="change_course_name" data-course-id="{{course.id}}" name="change_course_name" onclick="change_course_name(this)">{{course.name}}</p>
+<span>课程名</span><p id="change_course_name" data-course-id="{{course.id}}" name="change_course_name" onclick="change_course_name(this)">{{course.name}}</p>
 </p>
 
 <h2>班级管理</h2>
     <ul class="class_ul">
         {% for classroom in course.classrooms %}
-        <li><input class="edit_classroom_name" type="text" data-classroom-id={{classroom.id}} value="{{classroom.name}}">
+            <span>班级名</span><p id="change_classroom_name" data-classroom-id="{{classroom.id}}" name="change_classroom_name" onclick="change_classroom_name(this)">{{classroom.name}}</p>
         {% endfor %}
-        <a href="javascript:add_class_input()">+++</a>
     </ul>
-    <p>
-    <a href="javascript:edit_course_class_name()">submit course</a>
-    </p>
-
-<!-- <input type="submit" value="完成"> -->
 </form>
+<a href="{% url my_course %}">my cource</a>
 </body>
 </html5>
