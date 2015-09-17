@@ -1,16 +1,12 @@
 <html5>
 <body>
-<p>
-my course
-</p>
-
-<p>
-my course
-</p>
-source_list
-<p>
-</p>
-
+   <h2>my course</h2>
+   {% for course in courses %}
+   <h3>{{course.name}}    <a href="{% url edit_course course.id %}">edit</a> </h3>
+        {% for classroom in course.classrooms %}
+            <p>{{classroom.name}}</p>
+        {% endfor %}
+   {% endfor %}
 <p>
 <a href="{% url staff_info %}">staff_info</a>
 <a href="{% url create_course %}">create cource</a>

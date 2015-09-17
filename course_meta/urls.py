@@ -5,11 +5,13 @@
 from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns('course_meta.views',
+    url(r'^j$', 'ajax'),
     url(r'^teacher_login$', 'teacher_login', name='teacher_login'),
     url(r'^teacher_info$', 'teacher_info', name='teacher_info'),
     url(r'^edit_teacher_info$', 'teacher_info', {'edit':True}, name='edit_teacher_info'),
     url(r'^my_course$', 'my_course', name="my_course"),
     url(r'^create_course$', 'create_course', name="create_course"),
+    url(r'^edit_course/(?P<course_id>\d+)/$', 'edit_course', name="edit_course"),
     url(r'^staff_info$', 'staff_info', name="staff_info"),
     #url(r'^finish_course$', 'finish_course'),
     #url(r'^add_class_name$', 'add_class_name'),

@@ -34,6 +34,11 @@ from django.template import RequestContext
 
 from course_meta.models import Staff, Course, Classroom,  CourseStaffRelationship
 
+from course_meta.models_utils import has_course_manage_permission
+from course_meta.ajax_views import change_course_name
+import json
+from types import IntType
+
 @csrf_exempt
 def index(request):
     signature = request.GET.get('signature')
@@ -130,7 +135,7 @@ def teacher_info(request, edit=False):
             staff = Staff.objects.get(user=user)
             content.update({
                 "staff":staff,
-            }) 
+            })
         return render_to_response("course_meta/teacher_info.html", content, context_instance=RequestContext(request))
     else:
         user = request.user
@@ -161,24 +166,84 @@ def staff_info(request):
 
 @login_required
 def my_course(request):
-    content = {}
-    return render_to_response("course_meta/my_course.html", content, context_instance=RequestContext(request))
+    if request.method == "GET":
+        user = request.user
+        staff = Staff.objects.get(user=user)
+        courses = Course.objects.filter(staff=staff)
+        for course in courses:
+            course.classrooms = course.classroom_set.all()
+        content = {
+                "courses":courses,
+                "user":user,
+                "staff":staff,
+        }
+        return render_to_response("course_meta/my_course.html", content, context_instance=RequestContext(request))
+
+@login_required
+def edit_course(request, course_id):
+    if request.method == "GET":
+        user = request.user
+        try:
+            staff = Staff.objects.get(user=user)
+            course = Course.objects.get(pk=course_id)
+        except:
+            #log
+            return reverse("my_course")
+        course_staff_relationship = CourseStaffRelationship.objects.get(staff=staff, course=course)
+        role = course_staff_relationship.role
+        if role not in [0,1,2]: # course_meta.course_staff_relationship roles
+            #log
+            return reverse("my_course")
+        course.classrooms = course.classroom_set.all()
+        content = {
+            "course":course,
+            "user":user,
+            "staff":staff
+        }
+        return render_to_response("course_meta/edit_course.html", content, context_instance=RequestContext(request))
+    else:
+        user = request.user
+        if not has_course_manage_permission(user, course_ID):
+            return reverse("my_course")
+
+        course_name = request.POST.get("change_course_name", None)
+        edit_classroom_name_string = request.POST.get('edit_classroom_name_string', None)
+        classroom_name_string = request.POST.get('classroom_name_string', None)
+
+        course.name=change_course_name
+        course.save()
+        course_staff_relationship = CourseStaffRelationship(course=course,
+                staff=staff,
+                role=1,       #teacher from course_meta.models.py
+        )
+
+        classroom_name_list = classroom_name_string.split(";")
+        for classroom_name in classroom_name_list:
+            classroom = Classroom(course=course, name=classroom_name)
+            classroom.save()
+
+        #edit
+        edit_classroom_name_string
+        edit_classroom_name_list = edit_classroom_name_string.split(";")
+        for edit_classroom_name in edit_classroom_name_list:
+            classroom_id, classroom_name = edit_classroom_name_list.split(":")
+            classroom = Classroom.objects.get(pk=classroom_id)
+
+
+        return redirect('my_course')
 
 @login_required
 def create_course(request):
     #老师创建课程的方法
     if request.method == "GET":
-        user = request.user
-        staff = Staff.objects.get(user=user)
-        content = {
-                "user":user,
-                "staff":staff,
-        }
+        content = {}
         return render_to_response("course_meta/create_course.html", content, context_instance=RequestContext(request))
     else:
         user = request.user
         staff = Staff.objects.get(user=user)
         course_name = request.POST.get('course_name', None)
+        if not course_name:
+            return reverse('my_course')
         classroom_name_string = request.POST.get('classroom_name_string', None)
 
         course = Course(name=course_name)
@@ -198,3 +263,26 @@ def create_course(request):
 
 def invite_student(request):
     pass
+
+AJAX_FUNC_DICT = {
+    "change_course_name":"change_course_name(user, course_id, course_name)",
+    "add_tta":"add_tta(name, sn, ip, info)",
+}
+
+@csrf_exempt
+@login_required
+def ajax(request):
+    user = request.user
+    _p = request.POST
+    ctype = _p.get("type", None)
+    course_id = _p.get("course_id", None)
+    course_name = _p.get("course_name", None)
+    if not ctype:
+        raise Http404
+    if ctype in AJAX_FUNC_DICT:
+        ajax_data = eval(AJAX_FUNC_DICT[ctype])
+        if type(ajax_data) is IntType:
+            ajax_data = str(ajax_data)
+        #return StreamingHttpResponse(ajax_data)
+        return HttpResponse(ajax_data)
+    raise Http404

@@ -79,7 +79,7 @@ class Course(models.Model):
     classtag = models.CharField(max_length=255, blank=True, default='')
 
     def __unicode__(self):
-        return u'%s %s' % (self.course_id, self.name)
+        return u'%s %s' % (self.id, self.name)
 
     @property
     def start_status(self):

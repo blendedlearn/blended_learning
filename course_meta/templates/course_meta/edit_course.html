@@ -1,0 +1,28 @@
+<html5>
+<head>
+    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/course_management.js"></script>
+    <script src="{{ STATIC_URL }}js/change_course.js"></script>
+</head>
+<body>
+<h1>edit course</h1>
+
+<p>
+<p id="change_course_name" data-course-id="{{course.id}}" name="change_course_name" onclick="change_course_name(this)">{{course.name}}</p>
+</p>
+
+<h2>班级管理</h2>
+    <ul class="class_ul">
+        {% for classroom in course.classrooms %}
+        <li><input class="edit_classroom_name" type="text" data-classroom-id={{classroom.id}} value="{{classroom.name}}">
+        {% endfor %}
+        <a href="javascript:add_class_input()">+++</a>
+    </ul>
+    <p>
+    <a href="javascript:edit_course_class_name()">submit course</a>
+    </p>
+
+<!-- <input type="submit" value="完成"> -->
+</form>
+</body>
+</html5>
